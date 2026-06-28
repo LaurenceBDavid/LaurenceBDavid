@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#070707; }
+    @keyframes tojiBlink { 0%,92%,100%{opacity:1;} 94%,98%{opacity:.2;} }
+    @keyframes curBlink { 0%,49%{opacity:1;} 50%,100%{opacity:0;} }
+    @keyframes tojiScroll { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+    @keyframes growX { from{transform:scaleX(0);} to{transform:scaleX(1);} }
+    @keyframes growY { from{transform:scaleY(0);} to{transform:scaleY(1);} }
+    @keyframes tojiSlash1 { 0%{transform:translate(-55%,-30px) rotate(20deg); opacity:0;} 12%{opacity:1;} 80%{opacity:1;} 100%{transform:translate(55%,320px) rotate(20deg); opacity:0;} }
+    @keyframes tojiSlash2 { 0%{transform:translate(55%,-30px) rotate(-20deg); opacity:0;} 18%{opacity:1;} 82%{opacity:1;} 100%{transform:translate(-55%,320px) rotate(-20deg); opacity:0;} }
+    @keyframes tojiPulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.5);} 50%{box-shadow:0 0 0 6px rgba(255,255,255,0);} }
+    @keyframes daggerFlash { 0%,38%,46%,100%{opacity:1; text-shadow:0 0 14px rgba(255,255,255,.7);} 40%,44%{opacity:.15; text-shadow:none;} 70%{opacity:1;} 72%{opacity:.2;} 74%{opacity:1;} }
+    .toji-slash{ position:absolute; left:0; top:0; width:150%; height:2px; background:linear-gradient(90deg, transparent, #fff 45%, #fff 55%, transparent); box-shadow:0 0 10px rgba(255,255,255,.85); transform-origin:left center; z-index:3; pointer-events:none; }
+    @keyframes sliceA { 0%{transform:translate(-70%,-25%) rotate(24deg); opacity:0;} 2%{opacity:1;} 7%{opacity:1;} 11%{opacity:0;} 100%{transform:translate(70%,125%) rotate(24deg); opacity:0;} }
+    @keyframes sliceB { 0%{transform:translate(70%,-25%) rotate(-24deg); opacity:0;} 4%{opacity:1;} 9%{opacity:1;} 13%{opacity:0;} 100%{transform:translate(-70%,125%) rotate(-24deg); opacity:0;} }
+    .toji-slice{ position:absolute; left:-20%; top:0; width:140%; height:2px; background:linear-gradient(90deg, transparent, #fff 42%, #fff 58%, transparent); box-shadow:0 0 12px rgba(255,255,255,.9), 0 0 2px #fff; z-index:10; pointer-events:none; will-change:transform,opacity; }
+    @keyframes drift { 0%{transform:translateY(30px); opacity:0;} 14%{opacity:.85;} 80%{opacity:.6;} 100%{transform:translateY(-90px); opacity:0;} }
+    @keyframes driftSway { 0%{transform:translate(0,30px); opacity:0;} 14%{opacity:.8;} 50%{transform:translate(14px,-200px);} 80%{opacity:.5;} 100%{transform:translate(-6px,-420px); opacity:0;} }
+    @keyframes glint { 0%{transform:translateX(-90px) skewX(-18deg); opacity:0;} 12%{opacity:1;} 42%{opacity:1;} 52%{opacity:0;} 100%{transform:translateX(420px) skewX(-18deg); opacity:0;} }
+    .toji-ash{ position:absolute; width:3px; height:3px; border-radius:50%; background:#fff; box-shadow:0 0 6px rgba(255,255,255,.9); pointer-events:none; }
+    .toji-marquee{ animation: tojiScroll 24s linear infinite; }
+    .tj-bar{ transform-origin:left center; animation: growX 1s cubic-bezier(.2,.85,.25,1) both; }
+    .tj-col{ transform-origin:bottom center; animation: growY .85s cubic-bezier(.2,.85,.25,1) both; }
+  </style>
+</helmet>
+<x-import component-from-global-scope="image-slot" from="./image-slot.js" hint-size="0,0"></x-import>
+<div style="background:#070707; min-height:100vh; display:flex; justify-content:center; padding:44px 20px; font-family:'Oswald',sans-serif;">
+  <div style="position:relative; width:900px; max-width:100%; background:#0b0b0b; border:1px solid #242424;">
+
+    <!-- scanline overlay -->
+    <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:8; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0px, rgba(255,255,255,.018) 1px, transparent 1px, transparent 3px); mix-blend-mode:screen;"></div>
+    </sc-if>
+
+    <!-- white slicing sweeps -->
+    <div style="position:absolute; inset:0; z-index:10; overflow:hidden; pointer-events:none;">
+      <div class="toji-slice" style="animation:sliceA 7s ease-in 1.5s infinite;"></div>
+      <div class="toji-slice" style="animation:sliceB 9s ease-in 4.5s infinite;"></div>
+    </div>
+
+    <!-- drifting white embers -->
+    <div style="position:absolute; inset:0; z-index:6; overflow:hidden; pointer-events:none;">
+      <span class="toji-ash" style="left:8%;  bottom:0; animation:drift 9s linear 0s   infinite;"></span>
+      <span class="toji-ash" style="left:18%; bottom:0; animation:drift 12s linear 1.2s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:27%; bottom:0; animation:drift 8s linear 2.6s  infinite;"></span>
+      <span class="toji-ash" style="left:36%; bottom:0; animation:drift 13s linear 0.6s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:45%; bottom:0; animation:drift 10s linear 3.4s infinite;"></span>
+      <span class="toji-ash" style="left:54%; bottom:0; animation:drift 11s linear 1.8s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:63%; bottom:0; animation:drift 9s linear 4.2s  infinite;"></span>
+      <span class="toji-ash" style="left:72%; bottom:0; animation:drift 14s linear 0.9s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:81%; bottom:0; animation:drift 10s linear 2.2s infinite;"></span>
+      <span class="toji-ash" style="left:90%; bottom:0; animation:drift 12s linear 3.8s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:13%; bottom:0; animation:driftSway 16s linear 0.4s infinite; width:4px; height:4px;"></span>
+      <span class="toji-ash" style="left:23%; bottom:0; animation:driftSway 19s linear 2.9s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:32%; bottom:0; animation:driftSway 15s linear 5.1s infinite;"></span>
+      <span class="toji-ash" style="left:41%; bottom:0; animation:driftSway 18s linear 1.3s infinite; width:4px; height:4px;"></span>
+      <span class="toji-ash" style="left:50%; bottom:0; animation:driftSway 17s linear 3.7s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:59%; bottom:0; animation:driftSway 20s linear 0.8s infinite;"></span>
+      <span class="toji-ash" style="left:68%; bottom:0; animation:driftSway 15s linear 4.6s infinite; width:4px; height:4px;"></span>
+      <span class="toji-ash" style="left:77%; bottom:0; animation:driftSway 18s linear 2.1s infinite; width:2px; height:2px;"></span>
+      <span class="toji-ash" style="left:86%; bottom:0; animation:driftSway 16s linear 5.4s infinite;"></span>
+      <span class="toji-ash" style="left:95%; bottom:0; animation:driftSway 19s linear 1.7s infinite; width:4px; height:4px;"></span>
+    </div>
+
+    <!-- corner registration marks -->
+    <div style="position:absolute; top:7px; left:7px; width:12px; height:12px; border-top:1.5px solid #4a4a4a; border-left:1.5px solid #4a4a4a; z-index:9; pointer-events:none;"></div>
+    <div style="position:absolute; top:7px; right:7px; width:12px; height:12px; border-top:1.5px solid #4a4a4a; border-right:1.5px solid #4a4a4a; z-index:9; pointer-events:none;"></div>
+    <div style="position:absolute; bottom:7px; left:7px; width:12px; height:12px; border-bottom:1.5px solid #4a4a4a; border-left:1.5px solid #4a4a4a; z-index:9; pointer-events:none;"></div>
+    <div style="position:absolute; bottom:7px; right:7px; width:12px; height:12px; border-bottom:1.5px solid #4a4a4a; border-right:1.5px solid #4a4a4a; z-index:9; pointer-events:none;"></div>
+
+    <!-- top metadata bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 16px; border-bottom:1px solid #1f1f1f; font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.16em; color:#6e6e6e; text-transform:uppercase;">
+      <span>// PROFILE_README.md</span>
+      <span style="display:flex; gap:18px;">
+        <span>STATUS: <span style="color:#f3f3f3;">{{ status }}</span></span>
+        <span>FOCUS: <span style="color:#f3f3f3;">CYBERSECURITY</span></span>
+      </span>
+    </div>
+
+    <!-- BANNER -->
+    <div style="position:relative; height:340px; border-bottom:1px solid #1f1f1f; overflow:hidden; background:#000;">
+      <image-slot id="toji-banner" style="position:absolute; inset:0; width:100%; height:100%; filter:grayscale(1) contrast(1.12);" shape="rect" placeholder="DROP ARTWORK"></image-slot>
+      <!-- halftone screentone -->
+      <div style="position:absolute; inset:0; z-index:1; pointer-events:none; opacity:.55; background-image:radial-gradient(rgba(255,255,255,.6) 22%, transparent 24%); background-size:5px 5px; -webkit-mask-image:linear-gradient(118deg, #000 0%, transparent 52%); mask-image:linear-gradient(118deg, #000 0%, transparent 52%); mix-blend-mode:overlay;"></div>
+      <div style="position:absolute; inset:0; background:linear-gradient(90deg, rgba(5,5,5,.94) 0%, rgba(5,5,5,.55) 40%, rgba(5,5,5,.15) 66%, rgba(5,5,5,.85) 90%, rgba(5,5,5,.97) 100%); pointer-events:none;"></div>
+      <!-- katana slash intro -->
+      <div class="toji-slash" style="animation:tojiSlash1 1s ease-out .35s both;"></div>
+      <div class="toji-slash" style="animation:tojiSlash2 1s ease-out .6s both;"></div>
+      <div style="position:absolute; left:0; bottom:0; width:100%; height:120px; background:linear-gradient(0deg, rgba(7,7,7,1) 0%, rgba(7,7,7,0) 100%); pointer-events:none;"></div>
+
+      <!-- vertical kanji -->
+      <div style="position:absolute; top:22px; right:22px; font-family:'Noto Sans JP',sans-serif; font-weight:900; font-size:30px; line-height:1.05; color:#f3f3f3; writing-mode:vertical-rl; letter-spacing:.1em; pointer-events:none; z-index:2;">呪術師殺し</div>
+
+      <!-- name block -->
+      <div style="position:absolute; left:34px; bottom:30px; z-index:2;">
+        <div style="font-family:'JetBrains Mono',monospace; font-weight:500; font-size:13px; letter-spacing:.42em; color:#9a9a9a; margin-bottom:10px;">LAURENCE B. DAVID</div>
+        <div style="position:relative; display:inline-block; overflow:hidden; font-family:'Anton',sans-serif; font-size:78px; line-height:.84; letter-spacing:.01em; color:#fafafa; text-transform:uppercase; cursor:default; transition:text-shadow .12s, letter-spacing .25s;" style-hover="text-shadow:4px 0 #5a5a5a,-4px 0 #2a2a2a,0 0 18px rgba(255,255,255,.25); letter-spacing:.05em;">LAURENCE<span style="position:absolute; top:0; left:0; width:55px; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent); animation:glint 5.5s ease-in-out 2s infinite; pointer-events:none;"></span></div>
+        <div style="display:flex; align-items:center; gap:12px; margin-top:14px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; color:#bdbdbd;">
+          <span style="width:9px; height:9px; background:#f3f3f3; display:inline-block; border-radius:50%; animation:tojiBlink 4s infinite, tojiPulse 2.2s ease-out infinite;"></span>
+          THREAT HUNTER · CS STUDENT
+        </div>
+      </div>
+    </div>
+
+    <!-- scrolling marquee -->
+    <div style="overflow:hidden; border-bottom:1px solid #1f1f1f; background:#000; padding:7px 0;">
+      <div class="{{ marqueeClass }}" style="display:inline-flex; white-space:nowrap; font-family:'Anton',sans-serif; font-size:14px; letter-spacing:.28em; color:#2c2c2c; text-transform:uppercase;">
+        <span>PYTHON ★ WIRESHARK ★ NMAP ★ LINUX ★ CCNA CYBEROPS ★ SQL ★ JAVA ★ C# ★ PACKET TRACER ★ PHP ★ PYTHON ★ WIRESHARK ★ NMAP ★ LINUX ★ CCNA CYBEROPS ★ SQL ★ JAVA ★ C# ★ PACKET TRACER ★ PHP ★&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- STATS STRIP -->
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid #1f1f1f;">
+      <div style="padding:24px 18px; border-right:1px solid #1f1f1f; transition:background .15s;" style-hover="background:#141414;">
+        <div style="font-family:'Anton',sans-serif; font-size:42px; color:#fafafa; line-height:1;">07</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.18em; color:#7a7a7a; margin-top:8px;">CERTIFICATIONS</div>
+      </div>
+      <div style="padding:24px 18px; border-right:1px solid #1f1f1f; transition:background .15s;" style-hover="background:#141414;">
+        <div style="font-family:'Anton',sans-serif; font-size:42px; color:#fafafa; line-height:1;">13</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.18em; color:#7a7a7a; margin-top:8px;">PROJECTS SHIPPED</div>
+      </div>
+      <div style="padding:24px 18px; border-right:1px solid #1f1f1f; transition:background .15s;" style-hover="background:#141414;">
+        <div style="font-family:'Anton',sans-serif; font-size:42px; color:#fafafa; line-height:1;">06</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.18em; color:#7a7a7a; margin-top:8px;">LANGUAGES</div>
+      </div>
+      <div style="padding:24px 18px; transition:background .15s;" style-hover="background:#141414;">
+        <div style="font-family:'Anton',sans-serif; font-size:42px; color:#fafafa; line-height:1;">11</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.18em; color:#7a7a7a; margin-top:8px;">VULNERABILITIES CAUGHT</div>
+      </div>
+    </div>
+
+    <!-- TOOLKIT -->
+    <div style="padding:34px 34px 30px; border-bottom:1px solid #1f1f1f;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.2em; color:#6e6e6e; margin-bottom:20px;">$ ls ./toolkit</div>
+      <div style="display:flex; flex-direction:column; gap:0;">
+
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:18px; padding:15px 16px; border-top:1px solid #1a1a1a; cursor:default;">
+          <div style="display:flex; align-items:baseline; gap:16px;">
+            <span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:#6e6e6e; min-width:34px;">01</span>
+            <span style="font-family:'Oswald',sans-serif; font-weight:600; font-size:18px; letter-spacing:.03em; color:#fafafa; min-width:230px;">Cybersecurity &amp; Networking</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9a9a9a; text-align:right;">Wireshark · Nmap · Cisco Packet Tracer · Linux</span>
+        </div>
+
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:18px; padding:15px 16px; border-top:1px solid #1a1a1a; cursor:default;">
+          <div style="display:flex; align-items:baseline; gap:16px;">
+            <span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:#6e6e6e; min-width:34px;">02</span>
+            <span style="font-family:'Oswald',sans-serif; font-weight:600; font-size:18px; letter-spacing:.03em; color:#fafafa; min-width:230px;">Programming</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9a9a9a; text-align:right;">Python · Java · C# · SQL · VB.NET</span>
+        </div>
+
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:18px; padding:15px 16px; border-top:1px solid #1a1a1a; cursor:default;">
+          <div style="display:flex; align-items:baseline; gap:16px;">
+            <span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:#6e6e6e; min-width:34px;">03</span>
+            <span style="font-family:'Oswald',sans-serif; font-weight:600; font-size:18px; letter-spacing:.03em; color:#fafafa; min-width:230px;">Web Development</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9a9a9a; text-align:right;">HTML · CSS · JavaScript · PHP</span>
+        </div>
+
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:18px; padding:15px 16px; border-top:1px solid #1a1a1a; border-bottom:1px solid #1a1a1a; cursor:default;">
+          <div style="display:flex; align-items:baseline; gap:16px;">
+            <span style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:#6e6e6e; min-width:34px;">04</span>
+            <span style="font-family:'Oswald',sans-serif; font-weight:600; font-size:18px; letter-spacing:.03em; color:#fafafa; min-width:230px;">Tools &amp; Platforms</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#9a9a9a; text-align:right;">GitHub · Unity</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRIBUTION GRAPH -->
+    <div style="padding:34px 34px 30px; border-bottom:1px solid #1f1f1f;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:18px;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.2em; color:#6e6e6e;">$ git log --graph</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.12em; color:#9a9a9a;">1,247 CONTRIBUTIONS · LAST YEAR</div>
+      </div>
+
+      <div style="display:grid; grid-template-rows:repeat(7, 11px); grid-auto-flow:column; grid-auto-columns:11px; gap:3px; animation:fadeUp .6s ease both; overflow-x:auto; padding-bottom:2px;">
+        <sc-for list="{{ cells }}" as="cell" hint-placeholder-count="364">
+          <div style="width:11px; height:11px; background:{{ cell.bg }};"></div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; margin-top:20px;">
+        <div style="display:flex; align-items:center; gap:6px; font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.12em; color:#7a7a7a;">
+          LESS
+          <span style="width:10px; height:10px; background:#161616;"></span>
+          <span style="width:10px; height:10px; background:#3a3a3a;"></span>
+          <span style="width:10px; height:10px; background:#6a6a6a;"></span>
+          <span style="width:10px; height:10px; background:#9a9a9a;"></span>
+          <span style="width:10px; height:10px; background:#ededed;"></span>
+          MORE
+        </div>
+        <div style="display:flex; gap:28px;">
+          <div style="display:flex; align-items:baseline; gap:8px;">
+            <span style="font-family:'Anton',sans-serif; font-size:22px; color:#fafafa; line-height:1;">28</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#7a7a7a;">DAY STREAK</span>
+          </div>
+          <div style="display:flex; align-items:baseline; gap:8px;">
+            <span style="font-family:'Anton',sans-serif; font-size:22px; color:#fafafa; line-height:1;">96</span>
+            <span style="font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.14em; color:#7a7a7a;">LONGEST</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUOTE -->
+    <div style="padding:46px 34px; text-align:center; border-bottom:1px solid #1f1f1f; position:relative;">
+      <blockquote style="margin:0; font-family:'Anton',sans-serif; font-size:34px; line-height:1.15; color:#fafafa; text-transform:uppercase; max-width:680px; margin-inline:auto;">
+        “Even heaven demands death.”
+      </blockquote>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; color:#5a5a5a;">
+      <span>LAURENCE B. DAVID · TARLAC CITY, PH</span>
+      <span>SESSION <span ref="{{ refTimer }}">00:00</span> · github.com/LaurenceBDavid</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:940},&quot;status&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;OPEN TO WORK&quot;,&quot;STUDENT&quot;,&quot;HUNTING&quot;,&quot;AVAILABLE&quot;],&quot;default&quot;:&quot;OPEN TO WORK&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Profile&quot;},&quot;animations&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;scanlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  // Live values write straight to DOM refs so the component renders ONCE
+  // and the one-shot intro CSS animations never restart.
+  componentDidMount() {
+    const motion = this.props.animations !== false;
+    const out = 'cybersecurity student // threat hunter // securing the network';
+    if (!motion) {
+      if (this._typed) this._typed.textContent = out;
+    } else {
+      let i = 0;
+      this._t = setInterval(() => {
+        i++;
+        if (this._typed) this._typed.textContent = out.slice(0, i);
+        if (i >= out.length) clearInterval(this._t);
+      }, 36);
+    }
+    let secs = 0;
+    this._s = setInterval(() => {
+      secs++;
+      if (this._timer) {
+        const m = String(Math.floor(secs / 60)).padStart(2, '0');
+        const ss = String(secs % 60).padStart(2, '0');
+        this._timer.textContent = m + ':' + ss;
+      }
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    [this._t, this._s].forEach(t => t && clearInterval(t));
+  }
+
+  contributionCells() {
+    const map = ['#161616', '#3a3a3a', '#6a6a6a', '#9a9a9a', '#ededed'];
+    const cells = [];
+    for (let i = 0; i < 364; i++) {
+      const n = Math.abs(Math.sin(i * 12.9898) * 43758.5453);
+      const r = n - Math.floor(n);
+      let lvl = 0;
+      if (r >= 0.95) lvl = 4;
+      else if (r >= 0.84) lvl = 3;
+      else if (r >= 0.68) lvl = 2;
+      else if (r >= 0.45) lvl = 1;
+      cells.push({ bg: map[lvl] });
+    }
+    return cells;
+  }
+
+  renderVals() {
+    const motion = this.props.animations !== false;
+    return {
+      refTyped: el => { this._typed = el; },
+      refTimer: el => { this._timer = el; },
+      status: this.props.status || 'OPEN TO WORK',
+      scanlines: this.props.scanlines !== false,
+      marqueeClass: motion ? 'toji-marquee' : '',
+      cells: this.contributionCells(),
+    };
+  }
+}
+</script>
+</body>
+</html>
