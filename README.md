@@ -1,4 +1,4 @@
-# Laurence B. David
+
 
 ![Laurence — Toji theme](banner.svg)
 
